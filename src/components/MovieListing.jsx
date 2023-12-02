@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import styled from "styled-components";
 import MovieCard from "./MovieCard";
@@ -78,23 +78,40 @@ function App() {
 
   const fetchData = async (searchString) => {
     const response = await Axios.get(
-      `https://www.omdbapi.com/?s=${searchString}&apikey=${API_KEY}`,
+      `https://www.omdbapi.com/?s=${searchString}&apikey=${API_KEY}`
     );
     updateMovieList(response.data.Search);
   };
 
+
+  useEffect(() => {
+    const defaultSearchString = "Avengers";
+    fetchData(defaultSearchString);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery]);
+
   const onTextChange = (e) => {
-    onMovieSelect("")
+    const inputText = e.target.value;
+    onMovieSelect("");
     clearTimeout(timeoutId);
-    updateSearchQuery(e.target.value);
-    const timeout = setTimeout(() => fetchData(e.target.value), 500);
-    updateTimeoutId(timeout);
+    updateSearchQuery(inputText);
+
+    if (inputText.trim() === "") {
+      fetchData("Avengers");
+    } else {
+      const timeout = setTimeout(() => fetchData(inputText), 50);
+      updateTimeoutId(timeout);
+    }
   };
+
   return (
     <Container>
       <Header>
         <AppName>
-          <MovieImage src="/react-movie-app/movie-icon.svg" />
+          <MovieImage src="/react-movie-app/movie-icon.png" />
           React Movie App
         </AppName>
         <SearchBox>
