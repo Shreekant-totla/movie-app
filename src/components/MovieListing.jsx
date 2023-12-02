@@ -3,6 +3,7 @@ import Axios from "axios";
 import styled from "styled-components";
 import MovieCard from "./MovieCard";
 import MovieDetailPage from "./MovieDetailPage";
+import Login from "./Login";
 
 export const API_KEY = "a2c2b03";
 
@@ -10,11 +11,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const AppName = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
+
 const Header = styled.div`
   background-color: black;
   color: white;
@@ -27,6 +30,7 @@ const Header = styled.div`
   font-weight: bold;
   box-shadow: 0 3px 6px 0 #555;
 `;
+
 const SearchBox = styled.div`
   display: flex;
   flex-direction: row;
@@ -36,15 +40,18 @@ const SearchBox = styled.div`
   width: 50%;
   background-color: white;
 `;
+
 const SearchIcon = styled.img`
   width: 32px;
   height: 32px;
 `;
+
 const MovieImage = styled.img`
   width: 48px;
   height: 48px;
   margin: 15px;
 `;
+
 const SearchInput = styled.input`
   color: black;
   font-size: 16px;
@@ -53,13 +60,15 @@ const SearchInput = styled.input`
   outline: none;
   margin-left: 15px;
 `;
+
 const MovieListContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Four columns with equal width */
-  grid-gap: 25px; /* Adjust the gap between grid items */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 25px;
   padding: 30px;
   justify-content: space-evenly;
 `;
+
 const Placeholder = styled.img`
   width: 120px;
   height: 120px;
@@ -67,21 +76,27 @@ const Placeholder = styled.img`
   opacity: 50%;
 `;
 
+const Button = styled.button`
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
 function App() {
   const [searchQuery, updateSearchQuery] = useState("");
-
   const [movieList, updateMovieList] = useState([]);
   const [selectedMovie, onMovieSelect] = useState();
-
   const [timeoutId, updateTimeoutId] = useState();
+  const [auth, setAuth] = useState(false);
+  const [user, setUser] = useState(null);
 
+console.log(user,"user")
   const fetchData = async (searchString) => {
     const response = await Axios.get(
       `https://www.omdbapi.com/?s=${searchString}&apikey=${API_KEY}`
     );
     updateMovieList(response.data.Search);
   };
-
 
   useEffect(() => {
     const defaultSearchString = "Avengers";
@@ -106,6 +121,19 @@ function App() {
     }
   };
 
+  const handleLogin = () => {
+    setAuth(true);
+  };
+
+  const redirectToLogin = () => {
+    setAuth(true);
+  };
+
+  const handleLogout = () => {
+    setAuth(false);
+    setUser(null); // Clear user information on logout
+  };
+  
   return (
     <Container>
       <Header>
@@ -121,8 +149,23 @@ function App() {
             onChange={onTextChange}
           />
         </SearchBox>
+        {auth ? (
+          user ? (
+            // Display user's name after successful login
+            <Button onClick={handleLogout}>{`Logout ${user.username}`}</Button>
+          ) : (
+            <Login auth={auth} onClose={handleLogin} redirectToLogin={redirectToLogin} setUser={setUser} />
+          )
+        ) : (
+          <Button onClick={handleLogin}>Login / SignUp</Button>
+        )}
       </Header>
-      {selectedMovie && <MovieDetailPage selectedMovie={selectedMovie} onMovieSelect={onMovieSelect}/>}
+      {selectedMovie && (
+        <MovieDetailPage
+          selectedMovie={selectedMovie}
+          onMovieSelect={onMovieSelect}
+        />
+      )}
       <MovieListContainer>
         {movieList?.length ? (
           movieList.map((movie, index) => (
