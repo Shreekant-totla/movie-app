@@ -54,12 +54,11 @@ const SearchInput = styled.input`
   margin-left: 15px;
 `;
 const MovieListContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Four columns with equal width */
+  grid-gap: 25px; /* Adjust the gap between grid items */
   padding: 30px;
-  gap: 25px;
-  justify-content: space-evenly;;
+  justify-content: space-evenly;
 `;
 const Placeholder = styled.img`
   width: 120px;
@@ -87,7 +86,7 @@ function App() {
   useEffect(() => {
     const defaultSearchString = "Avengers";
     fetchData(defaultSearchString);
-    
+
     return () => {
       clearTimeout(timeoutId);
     };

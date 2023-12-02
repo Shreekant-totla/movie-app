@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const MovieContainer = styled.div`
-  display: flex;
+  display: grid;
   flex-direction: column;
   padding: 10px;
   width: 280px;
@@ -10,6 +10,9 @@ const MovieContainer = styled.div`
   cursor: pointer;
 `;
 const CoverImage = styled.img`
+  display: block;
+  margin: auto;
+  padding-top: 10px;
   object-fit: cover;
   height: 362px;
 `;
